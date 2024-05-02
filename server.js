@@ -1,8 +1,8 @@
 import express from 'express';
 import cors from "cors";
 import connect from './database/connection.js';
-import userRouter from './routes/userRouter.js';
-
+import userRoutes from './routes/userRouter.js';
+import enquiryRoutes from './routes/enquiryRoute.js'
 const app = express();
 
 /** middlewares */
@@ -13,7 +13,8 @@ app.disable('x-powered-by'); // Correct typo in 'x-powered-by'
 const port = 4000;
 
 /** HTTP Requests */
-app.use(userRouter);
+app.use(userRoutes);
+app.use(enquiryRoutes);
 
 /** Connect to MongoDB */
 const startServer = async () => {
