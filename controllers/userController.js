@@ -5,16 +5,17 @@ import jwt from "jsonwebtoken";
 import Role from "../models/roleModel.js";
 import Permission from "../models/permissionModel.js";
 
-// Define secret key for JWT token
-const secretKey = "your_secret_key";
-
 export const getUsers = async (req, res) => {
   try {
     // Retrieve user's role and permissions from JWT token
     const { role, permissions } = req.user;
-
     // Check if the user's role has necessary permissions
-    if (!(role === "admin" && permissions.includes("view_users"))) {
+    // if (!(role === "admin" && permissions.includes("view_users"))) {
+    //   return res.status(403).json({
+    //     error: "Sorry! You are not authorized to perform this action.",
+    //   });
+    // }
+    if (!(role === "admin")) {
       return res.status(403).json({
         error: "Sorry! You are not authorized to perform this action.",
       });
@@ -33,16 +34,7 @@ export const getUsers = async (req, res) => {
 };
 
 export const userPostRegister = async (req, res) => {
-  const {
-    username,
-    name,
-    email,
-    mobile,
-    profile_img,
-    password,
-    role,
-    permissions,
-  } = req.body;
+  const { username, name, email, mobile, profile_img, password } = req.body;
 
   try {
     // Validate required fields
@@ -113,7 +105,7 @@ const generateAccessToken = (id, name, role, permissions) => {
     role: role,
     permissions: permissions,
   };
-  return jwt.sign(token_value, secretKey);
+  return jwt.sign(token_value, "secretkey");
 };
 
 export const userPostLogin = async (req, res) => {
@@ -144,11 +136,9 @@ export const userPostLogin = async (req, res) => {
     }).populate("roles");
 
     if (!existingUser) {
-      return res
-        .status(401)
-        .json({
-          error: "Seems you are not registered or entered wrong details",
-        });
+      return res.status(401).json({
+        error: "Seems you are not registered or entered wrong details",
+      });
     }
 
     // Compare hashed password
@@ -162,16 +152,18 @@ export const userPostLogin = async (req, res) => {
         .json({ error: "You have entered wrong password!" });
     } else {
       // Extract permissions from the user's roles
-      const permissions = existingUser.roles.reduce((acc, role) => {
-        return acc.concat(role.permissions);
-      }, []);
+      const role = existingUser.roles[0].name;
+      const permissions = existingUser.roles.permissions && existingUser.roles.permissions.map(
+        (permission) => permission.name
+      );
 
       return res.status(201).json({
         success: "Successful Login",
         token: generateAccessToken(
           existingUser._id,
           existingUser.name,
-          permissions 
+          role,
+          permissions
         ),
       });
     }
