@@ -111,7 +111,7 @@ const generateAccessToken = (id, name, role, permissions) => {
 export const userPostLogin = async (req, res) => {
   let usernameOrEmailOrMobile;
   const { username, email, mobile, password } = req.body;
-
+console.log(req.body);
   // Determine the value of usernameOrEmailOrMobile based on which field is provided
   if (username) {
     usernameOrEmailOrMobile = username;

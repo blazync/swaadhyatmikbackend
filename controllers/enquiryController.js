@@ -1,4 +1,5 @@
 import Enquiry from "../models/enqiryModel.js";
+import Contact from "../models/ContactDetails.js";
 
 // GET all enquiries
 export const getAllEnquiries = async (req, res) => {
@@ -100,6 +101,26 @@ export const deleteEnquiryById = async (req, res) => {
     res.status(204).send();
   } catch (error) {
     console.error("Error deleting enquiry by ID:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
+// POST a new enquiry
+export const createContact = async (req, res) => {
+  try {
+    const { name, email, phonenumber, message } = req.body;
+
+    const enquiry = await Contact.create({
+      name: name,
+      email: email,
+      phonenumber: phonenumber,
+      message: message
+    });
+
+    res.status(201).json(enquiry);
+  } catch (error) {
+    console.error("Error creating enquiry:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
