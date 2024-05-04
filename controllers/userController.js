@@ -35,7 +35,7 @@ export const getUsers = async (req, res) => {
 
 export const userPostRegister = async (req, res) => {
   const { username, name, email, mobile, profile_img, password } = req.body;
-
+  
   try {
     // Validate required fields
     if (!username || !name || !email || !mobile || !password) {
